@@ -3,409 +3,931 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>神里绫华 - 白鹭公主</title>
-  <!-- 引入Tailwind CSS -->
+  <title>樱岛麻衣 | 二次元角色展示</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- 引入Font Awesome -->
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- 配置Tailwind -->
+  <!-- Tailwind 配置 -->
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            primary: '#1E40AF', // 深蓝主色调
-            secondary: '#3B82F6', // 浅蓝辅助色
-            accent: '#F59E0B', // 金色点缀
-            character: {
-              blue: '#4F90D9', // 神里绫华专属蓝色
-              white: '#F8FAFC', // 白鹭白色
-              accent: '#D4AF37', // 点缀金色
-            }
+            primary: '#FF85A2',
+            secondary: '#8A79DF',
+            accent: '#FFD6E0',
+            dark: '#2D3748',
+            light: '#F7FAFC'
           },
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            display: ['"Noto Serif SC"', 'serif'],
+            inter: ['Inter', 'sans-serif'],
           },
         },
       }
     }
   </script>
   
-  <!-- 自定义工具类 -->
   <style type="text/tailwindcss">
     @layer utilities {
       .content-auto {
         content-visibility: auto;
       }
-      .text-balance {
-        text-wrap: balance;
-      }
       .text-shadow {
         text-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
-      .bg-blur {
-        backdrop-filter: blur(8px);
+      .text-shadow-lg {
+        text-shadow: 0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-float-slow {
+        animation: float 8s ease-in-out infinite;
+      }
+      .animate-float-fast {
+        animation: float 4s ease-in-out infinite;
+      }
+      .cherry-blossom {
+        position: absolute;
+        background: #FFC0CB;
+        border-radius: 150% 0 150% 0;
+        animation: falling 10s linear forwards;
+      }
+      .scale-up-center {
+        animation: scale-up-center 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
       }
     }
-  </style>
-  
-  <style>
-    /* 基础动画 */
-    @keyframes slideIn {
-      from {
-        transform: translateY(50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
     }
     
-    .animate-slideIn {
-      animation: slideIn 0.8s ease-out forwards;
-    }
-    
-    /* 延迟动画 */
-    .delay-100 { animation-delay: 100ms; }
-    .delay-200 { animation-delay: 200ms; }
-    .delay-300 { animation-delay: 300ms; }
-    .delay-400 { animation-delay: 400ms; }
-    
-    /* 滚动动画 */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s ease;
-    }
-    
-    .reveal.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    /* 平滑滚动 */
-    html {
-      scroll-behavior: smooth;
-    }
-    
-    /* 樱花飘落效果 */
-    .cherry-blossom {
-      position: fixed;
-      top: -10%;
-      z-index: -1;
-      animation: fall linear infinite;
-    }
-    
-    @keyframes fall {
+    @keyframes falling {
       0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 0.8;
       }
       100% {
-        transform: translateY(100vh) rotate(720deg);
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0.2;
       }
+    }
+    
+    @keyframes scale-up-center {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
-<body class="bg-gray-50 font-sans text-neutral antialiased">
-  <!-- 樱花飘落效果 - 动态生成 -->
-  <div id="cherry-blossoms"></div>
-  
+<body class="font-inter bg-light text-dark overflow-x-hidden">
   <!-- 导航栏 -->
-  <header class="fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
-    <div class="bg-white/80 bg-blur shadow-sm">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <a href="#" class="flex items-center space-x-2">
-              <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <i class="fa fa-crown text-white"></i>
+  <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold text-white text-shadow-lg flex items-center">
+        <span class="text-primary">樱岛</span>麻衣
+      </a>
+      
+      <!-- 桌面导航 -->
+      <div class="hidden md:flex space-x-8">
+        <a href="#home" class="text-white hover:text-primary transition-colors font-medium">首页</a>
+        <a href="#about" class="text-white hover:text-primary transition-colors font-medium">角色介绍</a>
+        <a href="#gallery" class="text-white hover:text-primary transition-colors font-medium">画廊</a>
+        <a href="#quotes" class="text-white hover:text-primary transition-colors font-medium">经典语录</a>
+        <a href="#contact" class="text-white hover:text-primary transition-colors font-medium">联系我</a>
+      </div>
+      
+      <!-- 移动端菜单按钮 -->
+      <button id="menu-toggle" class="md:hidden text-white text-2xl">
+        <i class="fa fa-bars"></i>
+      </button>
+    </div>
+    
+    <!-- 移动端导航菜单 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-md shadow-lg absolute w-full">
+      <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+        <a href="#home" class="text-dark hover:text-primary transition-colors font-medium py-2 border-b border-gray-100">首页</a>
+        <a href="#about" class="text-dark hover:text-primary transition-colors font-medium py-2 border-b border-gray-100">角色介绍</a>
+        <a href="#gallery" class="text-dark hover:text-primary transition-colors font-medium py-2 border-b border-gray-100">画廊</a>
+        <a href="#quotes" class="text-dark hover:text-primary transition-colors font-medium py-2 border-b border-gray-100">经典语录</a>
+        <a href="#contact" class="text-dark hover:text-primary transition-colors font-medium py-2">联系我</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 英雄区域 -->
+  <section id="home" class="min-h-screen relative flex items-center justify-center overflow-hidden">
+    <!-- 背景图 -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://picsum.photos/id/1004/1920/1080" alt="樱花背景" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-b from-dark/60 to-dark/80"></div>
+    </div>
+    
+    <!-- 樱花效果容器 -->
+    <div id="cherry-blossoms" class="absolute inset-0 pointer-events-none z-10"></div>
+    
+    <!-- 内容 -->
+    <div class="container mx-auto px-4 z-20 text-center">
+      <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-bold text-white mb-6 leading-tight text-shadow-lg">
+        樱岛麻衣
+        <span class="block text-[clamp(1.5rem,4vw,2.5rem)] text-primary mt-2">Sakurajima Mai</span>
+      </h1>
+      <p class="text-[clamp(1rem,3vw,1.25rem)] text-white/90 max-w-2xl mx-auto mb-10 text-shadow">
+        「青春猪头少年不会梦到兔女郎学姐」中的人气角色
+      </p>
+      <a href="#about" class="inline-block bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+        了解更多 <i class="fa fa-arrow-down ml-2"></i>
+      </a>
+    </div>
+    
+    <!-- 向下滚动指示 -->
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+      <i class="fa fa-angle-down text-3xl"></i>
+    </div>
+  </section>
+
+  <!-- 角色介绍 -->
+  <section id="about" class="py-20 bg-gradient-to-b from-light to-white relative">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.75rem,5vw,3rem)] font-bold text-dark mb-4">角色介绍</h2>
+        <div class="w-24 h-1 bg-primary mx-auto"></div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="relative">
+          <div class="absolute -top-6 -left-6 w-64 h-64 bg-primary/10 rounded-full z-0"></div>
+          <div class="absolute -bottom-8 -right-8 w-64 h-64 bg-secondary/10 rounded-full z-0"></div>
+          <img src="https://picsum.photos/id/1005/600/800" alt="樱岛麻衣形象" class="w-full h-auto rounded-lg shadow-xl z-10 relative animate-float">
+        </div>
+        
+        <div>
+          <h3 class="text-2xl font-semibold text-dark mb-6">基本信息</h3>
+          <div class="space-y-4 mb-8">
+            <div class="flex items-start">
+              <div class="bg-primary/10 p-3 rounded-full mr-4">
+                <i class="fa fa-user text-primary"></i>
               </div>
-              <span class="text-xl font-display font-bold text-primary">神里绫华</span>
-            </a>
+              <div>
+                <h4 class="font-medium text-dark">姓名</h4>
+                <p class="text-gray-600">樱岛麻衣（さくらじま まい）</p>
+              </div>
+            </div>
+            <div class="flex items-start">
+              <div class="bg-primary/10 p-3 rounded-full mr-4">
+                <i class="fa fa-book text-primary"></i>
+              </div>
+              <div>
+                <h4 class="font-medium text-dark">登场作品</h4>
+                <p class="text-gray-600">《青春猪头少年不会梦到兔女郎学姐》</p>
+              </div>
+            </div>
+            <div class="flex items-start">
+              <div class="bg-primary/10 p-3 rounded-full mr-4">
+                <i class="fa fa-graduation-cap text-primary"></i>
+              </div>
+              <div>
+                <h4 class="font-medium text-dark">学校</h4>
+                <p class="text-gray-600">峰原高中3年2班</p>
+              </div>
+            </div>
+            <div class="flex items-start">
+              <div class="bg-primary/10 p-3 rounded-full mr-4">
+                <i class="fa fa-star text-primary"></i>
+              </div>
+              <div>
+                <h4 class="font-medium text-dark">特点</h4>
+                <p class="text-gray-600">天才女演员、理性冷静、关心他人</p>
+              </div>
+            </div>
           </div>
           
-          <!-- 桌面导航 -->
-          <nav class="hidden md:flex space-x-8">
-            <a href="#introduction" class="text-neutral hover:text-primary transition-colors duration-200 font-medium">角色介绍</a>
-            <a href="#appearance" class="text-neutral hover:text-primary transition-colors duration-200 font-medium">相貌衣着</a>
-            <a href="#personality" class="text-neutral hover:text-primary transition-colors duration-200 font-medium">性格特点</a>
-            <a href="#life" class="text-neutral hover:text-primary transition-colors duration-200 font-medium">角色生活</a>
-            <a href="#abilities" class="text-neutral hover:text-primary transition-colors duration-200 font-medium">角色能力</a>
-          </nav>
-          
-          <!-- 移动端菜单按钮 -->
-          <div class="md:hidden">
-            <button id="menu-toggle" class="text-neutral hover:text-primary focus:outline-none">
-              <i class="fa fa-bars text-2xl"></i>
+          <h3 class="text-2xl font-semibold text-dark mb-4">角色背景</h3>
+          <p class="text-gray-600 mb-6 leading-relaxed">
+            樱岛麻衣是日本轻小说《青春猪头少年系列》中的女主角之一，也是该系列第一卷《青春猪头少年不会梦到兔女郎学姐》的主要角色。她是一位知名女演员，因饰演兔女郎角色而受到关注。
+          </p>
+          <p class="text-gray-600 mb-6 leading-relaxed">
+            表面上看，樱岛麻衣是一个成熟、冷静且理性的人，但内心深处她也有着脆弱的一面。她因为"青春期综合征"而变得在他人眼中"不可见"，直到遇到男主角梓川咲太。
+          </p>
+          <p class="text-gray-600 leading-relaxed">
+            樱岛麻衣的角色魅力在于她的成熟与孩子气并存，她的智慧和善良，以及她与梓川咲太之间微妙而动人的关系。
+          </p>
+        </div>
+      </div>
+      
+      <!-- 角色特点 -->
+      <div class="mt-20">
+        <h3 class="text-2xl font-semibold text-dark mb-10 text-center">角色特点分析</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <i class="fa fa-lightbulb-o text-primary text-2xl"></i>
+            </div>
+            <h4 class="text-xl font-semibold text-dark mb-4 text-center">聪明才智</h4>
+            <p class="text-gray-600 text-center">
+              樱岛麻衣拥有出众的智慧和洞察力，无论是学业还是演艺事业都表现出色。她能够迅速理解复杂的情况，并找到有效的解决方法。
+            </p>
+          </div>
+          <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <i class="fa fa-heart text-primary text-2xl"></i>
+            </div>
+            <h4 class="text-xl font-semibold text-dark mb-4 text-center">内心温柔</h4>
+            <p class="text-gray-600 text-center">
+              尽管表面上看起来冷漠，但樱岛麻衣实际上非常关心他人。她会默默地为他人着想，甚至牺牲自己的利益来帮助别人。
+            </p>
+          </div>
+          <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <i class="fa fa-shield text-primary text-2xl"></i>
+            </div>
+            <h4 class="text-xl font-semibold text-dark mb-4 text-center">坚强独立</h4>
+            <p class="text-gray-600 text-center">
+              面对青春期综合征带来的困扰和生活中的种种挑战，樱岛麻衣始终保持坚强，不依赖他人，努力克服困难。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 画廊 -->
+  <section id="gallery" class="py-20 bg-gradient-to-b from-white to-gray-50 relative">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.75rem,5vw,3rem)] font-bold text-dark mb-4">画廊</h2>
+        <div class="w-24 h-1 bg-primary mx-auto"></div>
+        <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
+          收集了樱岛麻衣在不同场景和服装下的精美形象，展现她的多样魅力
+        </p>
+      </div>
+      
+      <!-- 过滤器 -->
+      <div class="flex flex-wrap justify-center gap-4 mb-12">
+        <button class="filter-btn active bg-primary text-white px-6 py-2 rounded-full transition-all" data-filter="all">全部</button>
+        <button class="filter-btn bg-gray-200 hover:bg-primary/10 text-dark px-6 py-2 rounded-full transition-all" data-filter="school">校园</button>
+        <button class="filter-btn bg-gray-200 hover:bg-primary/10 text-dark px-6 py-2 rounded-full transition-all" data-filter="casual">日常</button>
+        <button class="filter-btn bg-gray-200 hover:bg-primary/10 text-dark px-6 py-2 rounded-full transition-all" data-filter="special">特别</button>
+      </div>
+      
+      <!-- 图片网格 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="gallery-item school group" data-category="school">
+          <div class="relative overflow-hidden rounded-xl shadow-lg">
+            <img src="https://picsum.photos/id/1011/600/800" alt="樱岛麻衣校园形象" class="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold text-white mb-2">校园制服</h3>
+                <p class="text-white/80">峰原高中的标准制服，展现出青春活力</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gallery-item casual group" data-category="casual">
+          <div class="relative overflow-hidden rounded-xl shadow-lg">
+            <img src="https://picsum.photos/id/1012/600/800" alt="樱岛麻衣日常形象" class="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold text-white mb-2">休闲装</h3>
+                <p class="text-white/80">简约而时尚的日常装扮，展现自然魅力</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gallery-item special group" data-category="special">
+          <div class="relative overflow-hidden rounded-xl shadow-lg">
+            <img src="https://picsum.photos/id/1013/600/800" alt="樱岛麻衣特别形象" class="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold text-white mb-2">兔女郎装扮</h3>
+                <p class="text-white/80">标志性的兔女郎服装，引发了一系列故事</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gallery-item school group" data-category="school">
+          <div class="relative overflow-hidden rounded-xl shadow-lg">
+            <img src="https://picsum.photos/id/1014/600/800" alt="樱岛麻衣校园形象" class="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold text-white mb-2">图书馆场景</h3>
+                <p class="text-white/80">在图书馆安静阅读的样子，展现知性魅力</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gallery-item casual group" data-category="casual">
+          <div class="relative overflow-hidden rounded-xl shadow-lg">
+            <img src="https://picsum.photos/id/1015/600/800" alt="樱岛麻衣日常形象" class="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold text-white mb-2">咖啡厅场景</h3>
+                <p class="text-white/80">在咖啡厅享受下午茶的休闲时光</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gallery-item special group" data-category="special">
+          <div class="relative overflow-hidden rounded-xl shadow-lg">
+            <img src="https://picsum.photos/id/1016/600/800" alt="樱岛麻衣特别形象" class="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+              <div class="p-6">
+                <h3 class="text-xl font-semibold text-white mb-2">舞台服装</h3>
+                <p class="text-white/80">在戏剧表演中的华丽服装，展现专业演员风采</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 查看更多按钮 -->
+      <div class="text-center mt-12">
+        <button class="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          加载更多图片 <i class="fa fa-refresh ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 经典语录 -->
+  <section id="quotes" class="py-20 bg-gradient-to-b from-gray-50 to-white relative">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.75rem,5vw,3rem)] font-bold text-dark mb-4">经典语录</h2>
+        <div class="w-24 h-1 bg-primary mx-auto"></div>
+        <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
+          收集了樱岛麻衣在作品中说过的经典台词，每一句都充满了智慧和深意
+        </p>
+      </div>
+      
+      <!-- 语录轮播 -->
+      <div class="max-w-4xl mx-auto relative">
+        <div id="quotes-carousel" class="overflow-hidden">
+          <div id="quotes-track" class="flex transition-transform duration-500">
+            <div class="quote-slide min-w-full px-4">
+              <div class="bg-white p-10 rounded-2xl shadow-xl relative">
+                <div class="text-primary/20 text-8xl absolute -top-6 -left-4">
+                  <i class="fa fa-quote-left"></i>
+                </div>
+                <div class="text-primary/20 text-8xl absolute -bottom-6 -right-4">
+                  <i class="fa fa-quote-right"></i>
+                </div>
+                <p class="text-xl md:text-2xl text-gray-700 mb-6 relative z-10 italic">
+                  「青春就是一场风暴。无论你多么害怕受伤，都无法逃避这场风暴。」
+                </p>
+                <div class="flex items-center justify-end">
+                  <div class="ml-4">
+                    <h4 class="font-semibold text-dark">樱岛麻衣</h4>
+                    <p class="text-gray-500">《青春猪头少年不会梦到兔女郎学姐》</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="quote-slide min-w-full px-4">
+              <div class="bg-white p-10 rounded-2xl shadow-xl relative">
+                <div class="text-primary/20 text-8xl absolute -top-6 -left-4">
+                  <i class="fa fa-quote-left"></i>
+                </div>
+                <div class="text-primary/20 text-8xl absolute -bottom-6 -right-4">
+                  <i class="fa fa-quote-right"></i>
+                </div>
+                <p class="text-xl md:text-2xl text-gray-700 mb-6 relative z-10 italic">
+                  「人们总是对自己不了解的事物抱有偏见，这就是人类的本性。」
+                </p>
+                <div class="flex items-center justify-end">
+                  <div class="ml-4">
+                    <h4 class="font-semibold text-dark">樱岛麻衣</h4>
+                    <p class="text-gray-500">《青春猪头少年不会梦到怀梦美少女》</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="quote-slide min-w-full px-4">
+              <div class="bg-white p-10 rounded-2xl shadow-xl relative">
+                <div class="text-primary/20 text-8xl absolute -top-6 -left-4">
+                  <i class="fa fa-quote-left"></i>
+                </div>
+                <div class="text-primary/20 text-8xl absolute -bottom-6 -right-4">
+                  <i class="fa fa-quote-right"></i>
+                </div>
+                <p class="text-xl md:text-2xl text-gray-700 mb-6 relative z-10 italic">
+                  「真正重要的东西，用眼睛是看不见的，要用心去感受。」
+                </p>
+                <div class="flex items-center justify-end">
+                  <div class="ml-4">
+                    <h4 class="font-semibold text-dark">樱岛麻衣</h4>
+                    <p class="text-gray-500">《青春猪头少年不会梦到迷失青鸟》</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 轮播控制按钮 -->
+        <button id="prev-quote" class="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1/2 bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-primary hover:text-white transition-colors z-10">
+          <i class="fa fa-angle-left text-xl"></i>
+        </button>
+        <button id="next-quote" class="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/2 bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-primary hover:text-white transition-colors z-10">
+          <i class="fa fa-angle-right text-xl"></i>
+        </button>
+        
+        <!-- 轮播指示器 -->
+        <div class="flex justify-center mt-8 space-x-2">
+          <button class="carousel-indicator w-3 h-3 rounded-full bg-primary transition-colors" data-index="0"></button>
+          <button class="carousel-indicator w-3 h-3 rounded-full bg-gray-300 transition-colors" data-index="1"></button>
+          <button class="carousel-indicator w-3 h-3 rounded-full bg-gray-300 transition-colors" data-index="2"></button>
+        </div>
+      </div>
+      
+      <!-- 角色人气投票 -->
+      <div class="mt-20 bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
+        <h3 class="text-2xl font-semibold text-dark mb-8 text-center">角色人气投票</h3>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <canvas id="character-chart" width="400" height="400"></canvas>
+          </div>
+          <div class="flex flex-col justify-center">
+            <p class="text-gray-600 mb-6">
+              樱岛麻衣在系列角色人气投票中一直名列前茅，她的聪明才智、成熟稳重和坚强性格深受粉丝喜爱。
+            </p>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-primary mr-2"></div>
+                <span class="text-gray-700">樱岛麻衣</span>
+                <span class="ml-auto font-semibold">42%</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-secondary mr-2"></div>
+                <span class="text-gray-700">梓川咲太</span>
+                <span class="ml-auto font-semibold">28%</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-accent mr-2"></div>
+                <span class="text-gray-700">双叶理央</span>
+                <span class="ml-auto font-semibold">15%</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-dark mr-2"></div>
+                <span class="text-gray-700">古贺朋绘</span>
+                <span class="ml-auto font-semibold">10%</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+                <span class="text-gray-700">其他角色</span>
+                <span class="ml-auto font-semibold">5%</span>
+              </div>
+            </div>
+            <button class="mt-6 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 w-full">
+              参与投票 <i class="fa fa-thumbs-up ml-2"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-    
-    <!-- 移动端导航菜单 -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg absolute w-full">
-      <div class="container mx-auto px-4 py-3 space-y-3">
-        <a href="#introduction" class="block text-neutral hover:text-primary transition-colors duration-200 font-medium py-2">角色介绍</a>
-        <a href="#appearance" class="block text-neutral hover:text-primary transition-colors duration-200 font-medium py-2">相貌衣着</a>
-        <a href="#personality" class="block text-neutral hover:text-primary transition-colors duration-200 font-medium py-2">性格特点</a>
-        <a href="#life" class="block text-neutral hover:text-primary transition-colors duration-200 font-medium py-2">角色生活</a>
-        <a href="#abilities" class="block text-neutral hover:text-primary transition-colors duration-200 font-medium py-2">角色能力</a>
+  </section>
+
+  <!-- 联系部分 -->
+  <section id="contact" class="py-20 bg-gradient-to-b from-white to-gray-100 relative">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.75rem,5vw,3rem)] font-bold text-dark mb-4">联系我</h2>
+        <div class="w-24 h-1 bg-primary mx-auto"></div>
+        <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
+          如果你也喜欢樱岛麻衣，欢迎与我交流分享你对这个角色的喜爱和看法
+        </p>
+      </div>
+      
+      <div class="max-w-5xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12">
+          <div>
+            <div class="bg-white rounded-2xl shadow-lg p-8 h-full">
+              <h3 class="text-xl font-semibold text-dark mb-6">留言板</h3>
+              <form id="contact-form">
+                <div class="mb-6">
+                  <label for="name" class="block text-gray-700 font-medium mb-2">姓名</label>
+                  <input type="text" id="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors" placeholder="请输入你的姓名">
+                </div>
+                <div class="mb-6">
+                  <label for="email" class="block text-gray-700 font-medium mb-2">邮箱</label>
+                  <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors" placeholder="请输入你的邮箱">
+                </div>
+                <div class="mb-6">
+                  <label for="message" class="block text-gray-700 font-medium mb-2">留言内容</label>
+                  <textarea id="message" rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors" placeholder="请输入你想对我说的话..."></textarea>
+                </div>
+                <button type="submit" class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 w-full">
+                  发送留言 <i class="fa fa-paper-plane ml-2"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          
+          <div>
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+              <h3 class="text-xl font-semibold text-dark mb-6">关于这个网站</h3>
+              <p class="text-gray-600 mb-4">
+                这个网站是为了纪念和展示二次元角色樱岛麻衣而创建的。这里收集了关于她的详细信息、精美图片和经典语录。
+              </p>
+              <p class="text-gray-600 mb-6">
+                我是一个樱岛麻衣的粉丝，希望通过这个网站与更多喜欢她的人分享对这个角色的喜爱和理解。
+              </p>
+              <div class="flex space-x-4">
+                <a href="#" class="bg-primary/10 hover:bg-primary/20 text-primary p-3 rounded-full transition-colors">
+                  <i class="fa fa-twitter"></i>
+                </a>
+                <a href="#" class="bg-primary/10 hover:bg-primary/20 text-primary p-3 rounded-full transition-colors">
+                  <i class="fa fa-instagram"></i>
+                </a>
+                <a href="#" class="bg-primary/10 hover:bg-primary/20 text-primary p-3 rounded-full transition-colors">
+                  <i class="fa fa-youtube-play"></i>
+                </a>
+                <a href="#" class="bg-primary/10 hover:bg-primary/20 text-primary p-3 rounded-full transition-colors">
+                  <i class="fa fa-github"></i>
+                </a>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+              <h3 class="text-xl font-semibold text-dark mb-6">最新动态</h3>
+              <div class="space-y-4">
+                <div class="flex">
+                  <div class="bg-primary/10 p-3 rounded-full mr-4">
+                    <i class="fa fa-calendar text-primary"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-dark">网站更新</h4>
+                    <p class="text-gray-600 text-sm">新增了5张樱岛麻衣的高清图片</p>
+                    <p class="text-gray-400 text-xs">2025年6月15日</p>
+                  </div>
+                </div>
+                <div class="flex">
+                  <div class="bg-primary/10 p-3 rounded-full mr-4">
+                    <i class="fa fa-star text-primary"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-dark">人气投票</h4>
+                    <p class="text-gray-600 text-sm">樱岛麻衣获得了本月角色人气榜第一名</p>
+                    <p class="text-gray-400 text-xs">2025年6月10日</p>
+                  </div>
+                </div>
+                <div class="flex">
+                  <div class="bg-primary/10 p-3 rounded-full mr-4">
+                    <i class="fa fa-quote-right text-primary"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-dark">新增语录</h4>
+                    <p class="text-gray-600 text-sm">添加了3句来自最新剧场版的经典台词</p>
+                    <p class="text-gray-400 text-xs">2025年6月5日</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <!-- 主内容区 -->
-  <main>
-    <!-- 英雄区域 - 角色插图 -->
-    <section class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-b from-primary/5 to-white">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col items-center text-center">
-          <!-- 角色名称和头衔 -->
-          <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-display font-bold text-primary mb-4 text-shadow animate-slideIn">
-            神里绫华
-          </h1>
-          <p class="text-[clamp(1rem,2vw,1.25rem)] text-primary/80 mb-8 animate-slideIn delay-100">
-            白鹭公主 · 社奉行神里家大小姐
+  <!-- 页脚 -->
+  <footer class="bg-dark text-white py-12 relative">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-bold mb-6">樱岛麻衣</h3>
+          <p class="text-gray-400 mb-6">
+            「青春猪头少年系列」中最受欢迎的角色之一
           </p>
-          
-          <!-- 角色插图区域 - 动态划入效果 -->
-          <div class="relative w-full max-w-3xl h-[clamp(300px,70vw,500px)] mb-12 overflow-hidden rounded-2xl shadow-2xl animate-slideIn delay-200">
-            <!-- 这里预留图片位置，实际使用时替换为神里绫华的图片 -->
-            <img src="https://picsum.photos/1200/800?random=1" alt="神里绫华角色插图" class="w-full h-full object-cover">
-            <!-- 装饰元素 -->
-            <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/60 to-transparent text-white">
-              <p class="text-lg md:text-xl font-medium">「霜天的流月，将指引你的道路。」</p>
-            </div>
-          </div>
-          
-          <!-- 快速导航按钮 -->
-          <div class="flex flex-wrap justify-center gap-4 mt-8 animate-slideIn delay-300">
-            <a href="#introduction" class="px-6 py-3 bg-primary text-white rounded-full shadow-md hover:bg-primary/90 transition-all duration-300 transform hover:-translate-y-1">
-              <i class="fa fa-info-circle mr-2"></i>角色介绍
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+              <i class="fa fa-twitter"></i>
             </a>
-            <a href="#abilities" class="px-6 py-3 bg-white text-primary border border-primary rounded-full shadow-md hover:bg-primary/5 transition-all duration-300 transform hover:-translate-y-1">
-              <i class="fa fa-sword mr-2"></i>角色能力
+            <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+              <i class="fa fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+              <i class="fa fa-youtube-play"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+              <i class="fa fa-github"></i>
             </a>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- 角色介绍部分 -->
-    <section id="introduction" class="py-16 bg-white">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 reveal">
-          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-display font-bold text-primary mb-4">身份背景</h2>
-          <div class="w-20 h-1 bg-primary mx-auto"></div>
+        <div>
+          <h4 class="text-lg font-semibold mb-6">快速链接</h4>
+          <ul class="space-y-3">
+            <li><a href="#home" class="text-gray-400 hover:text-primary transition-colors">首页</a></li>
+            <li><a href="#about" class="text-gray-400 hover:text-primary transition-colors">角色介绍</a></li>
+            <li><a href="#gallery" class="text-gray-400 hover:text-primary transition-colors">画廊</a></li>
+            <li><a href="#quotes" class="text-gray-400 hover:text-primary transition-colors">经典语录</a></li>
+            <li><a href="#contact" class="text-gray-400 hover:text-primary transition-colors">联系我</a></li>
+          </ul>
         </div>
-        
-        <div class="grid md:grid-cols-2 gap-8 items-center reveal">
-          <div class="order-2 md:order-1">
-            <p class="text-lg leading-relaxed mb-6">
-              放眼稻妻领土，未上至雷电将军视听的事务大多由「评定所」处理。「评定所」的议事权分属三家，人称三奉行，即「社奉行」、「天领奉行」与「勘定奉行」。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              拥有此三项奉行权利的家族，其姓氏为：神里、九条与柊，乃是稻妻无人不知无人不晓的御三家。而神里绫华，正是社奉行神里家的大小姐，远近闻名的「白鹭公主」。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              问及她为何被称为白鹭公主，稻妻人众说纷纭，却无人说得出「白鹭公主」之名的确切来由。不过，绫华受民众爱戴的事，倒是可见一斑。
-            </p>
-          </div>
-          <div class="order-1 md:order-2 relative">
-            <div class="aspect-square rounded-2xl overflow-hidden shadow-xl">
-              <img src="https://picsum.photos/600/600?random=2" alt="神里绫华背景相关插图" class="w-full h-full object-cover">
-            </div>
-            <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
-          </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-6">相关资源</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">原作小说</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">动画剧集</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">官方周边</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">粉丝社区</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">角色分析</a></li>
+          </ul>
         </div>
-      </div>
-    </section>
-
-    <!-- 相貌衣着部分 -->
-    <section id="appearance" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 reveal">
-          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-display font-bold text-primary mb-4">相貌衣着</h2>
-          <div class="w-20 h-1 bg-primary mx-auto"></div>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-12 items-center reveal">
-          <div class="order-2 md:order-1">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="aspect-square rounded-xl overflow-hidden shadow-lg">
-                <img src="https://picsum.photos/400/400?random=3" alt="神里绫华面部特写" class="w-full h-full object-cover">
-              </div>
-              <div class="aspect-square rounded-xl overflow-hidden shadow-lg">
-                <img src="https://picsum.photos/400/400?random=4" alt="神里绫华服饰特写" class="w-full h-full object-cover">
-              </div>
-              <div class="aspect-square rounded-xl overflow-hidden shadow-lg">
-                <img src="https://picsum.photos/400/400?random=5" alt="神里绫华服饰细节" class="w-full h-full object-cover">
-              </div>
-              <div class="aspect-square rounded-xl overflow-hidden shadow-lg">
-                <img src="https://picsum.photos/400/400?random=6" alt="神里绫华整体形象" class="w-full h-full object-cover">
-              </div>
+        <div>
+          <h4 class="text-lg font-semibold mb-6">订阅更新</h4>
+          <p class="text-gray-400 mb-4">
+            获取最新的樱岛麻衣相关资讯和网站更新
+          </p>
+          <form>
+            <div class="flex">
+              <input type="email" placeholder="输入你的邮箱" class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-dark">
+              <button type="submit" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-colors">
+                <i class="fa fa-envelope"></i>
+              </button>
             </div>
-          </div>
-          <div class="order-1 md:order-2">
-            <p class="text-lg leading-relaxed mb-6">
-              神里绫华灰蓝色的眸子上面是一层厚厚的齐刘海，雪白色的长发梳成高马尾，发绳上有类似武士兜的头饰。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              两髪垂穗子状的侧发用总角结束起，左眼角有一枚泪痣。身穿一件渐变蓝的羽织和深蓝色的褶裙，裙上印有落樱与流水的花纹。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              绫华的胸腹部被一件黑色的胴甲包裹，相连的裙甲盖住裙的两侧，甲胄上印有神里家的椿纹。红绳在腰部前后各系了一个总角结，背后的总角结位于背后的蓝紫色蝴蝶结中间，其上系着绫华的神之眼。
-            </p>
-          </div>
-        </div>
-        
-        <!-- 服饰细节展示 -->
-        <div class="mt-16 reveal">
-          <h3 class="text-xl font-bold text-primary mb-6">服饰细节解析</h3>
-          <div class="grid md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <i class="fa fa-tint text-primary text-2xl"></i>
-              </div>
-              <h4 class="text-lg font-medium text-center mb-2">渐变羽织</h4>
-              <p class="text-gray-600 text-center">渐变蓝色的羽织象征着稻妻的流水与天空，展现出优雅与灵动的气质。</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <i class="fa fa-flower text-primary text-2xl"></i>
-              </div>
-              <h4 class="text-lg font-medium text-center mb-2">椿纹甲胄</h4>
-              <p class="text-gray-600 text-center">甲胄上印有神里家的椿纹，代表着家族的荣耀与传承。</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <i class="fa fa-star text-primary text-2xl"></i>
-              </div>
-              <h4 class="text-lg font-medium text-center mb-2">神之眼</h4>
-              <p class="text-gray-600 text-center">冰属性神之眼系于背后的蝴蝶结上，是绫华力量的象征。</p>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
-    </section>
-
-    <!-- 性格特点部分 -->
-    <section id="personality" class="py-16 bg-white">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 reveal">
-          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-display font-bold text-primary mb-4">性格特点</h2>
-          <div class="w-20 h-1 bg-primary mx-auto"></div>
-        </div>
-        
-        <div class="bg-primary/5 rounded-2xl p-8 md:p-12 shadow-sm reveal">
-          <div class="max-w-3xl mx-auto">
-            <p class="text-lg leading-relaxed mb-6">
-              绫华性情善良仁厚，待人礼貌得体，常亲自出面处理民间事务，与民众距离很近。她个性认真，追求将每一件事务都办得尽善尽美。人们为这份心意所感动，亲近于她，还赠予她「白鹭公主」的雅称。街坊邻里说起她，总会露出真心实意的赞叹之色。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              受良好家教影响的绫华有着一颗纯如冰晶的至美之心。冬日里旋转冰晶，便能看到折射出的绚烂华彩。绫华的心灵亦是如此。她不只拥有华美拘谨的一面，心灵深处还埋藏着不为人知的温柔与可爱。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              不过，想转动高悬于天穹的心，就得有攀上云端的能力。对那般能人异士，绫华可是非常愿意与之结交的——因为良友于她，有如霜尖点翠，剑上流光，将是极富命运感的一笔点缀。
-            </p>
-            
-            <!-- 性格标签 -->
-            <div class="mt-8 flex flex-wrap gap-3">
-              <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium">善良仁厚</span>
-              <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium">礼貌得体</span>
-              <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium">认真负责</span>
-              <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium">温柔可爱</span>
-              <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium">重视友谊</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 引用名言 -->
-        <div class="mt-16 reveal">
-          <div class="relative max-w-2xl mx-auto">
-            <div class="bg-white p-8 md:p-10 rounded-2xl shadow-lg relative z-10">
-              <div class="text-4xl text-primary/20 absolute -top-4 -left-4">"</div>
-              <p class="text-lg md:text-xl font-medium italic text-center relative z-20">
-                「刀剑与茶汤，看似殊途，实则同归。若能在挥刀时怀持敬茶之心，亦能在奉茶时感悟斩铁之意。」
-              </p>
-            </div>
-            <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-primary/5 rounded-full blur-3xl -z-10"></div>
-          </div>
-        </div>
+      
+      <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
+        <p>&copy; 2025 樱岛麻衣粉丝网站. 保留所有权利.</p>
       </div>
-    </section>
+    </div>
+  </footer>
 
-    <!-- 角色生活部分 -->
-    <section id="life" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 reveal">
-          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-display font-bold text-primary mb-4">角色生活</h2>
-          <div class="w-20 h-1 bg-primary mx-auto"></div>
-        </div>
+  <!-- 返回顶部按钮 -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-primary/90 transition-all duration-300 opacity-0 invisible">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+
+  <!-- JavaScript -->
+  <script>
+    // 樱花效果
+    function createCherryBlossoms() {
+      const container = document.getElementById('cherry-blossoms');
+      const numPetals = 50;
+      
+      for (let i = 0; i < numPetals; i++) {
+        const petal = document.createElement('div');
+        petal.classList.add('cherry-blossom');
         
-        <div class="grid md:grid-cols-2 gap-12 reveal">
-          <div>
-            <h3 class="text-xl font-bold text-primary mb-6">日常生活</h3>
-            <p class="text-lg leading-relaxed mb-6">
-              在民众的想象中，贵族世家吃穿用度规格远超常人，那高贵如神里绫华，一定也过着极其奢侈、极其肆意的生活吧。然而，这样的想法只对了一半。单从形式而言，绫华的生活确实较寻常百姓讲究得多。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              平日里钻研花道、茶道，品名茶、赏奇花的开销也着实不小。不过，这些都是身为贵族大小姐的她必须掌握的技能，并无「肆意」一说。真正能让绫华露出笑容的，反而是那些寻常百姓也能享受的小事。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              譬如制作点心，譬如在池塘边捞金鱼，又譬如躲起来阅读八重堂新出的小说……无一不是小事。这种时刻的她，不是受人景仰的白鹭公主，不是掌管神里大宅的绫华大人，而是普普通通的「少女绫华」。
-            </p>
-          </div>
-          <div>
-            <h3 class="text-xl font-bold text-primary mb-6">私人时刻</h3>
-            <p class="text-lg leading-relaxed mb-6">
-              卸下端庄持重的对外形象，绽放出随性自在的真我。唯有作为「少女绫华」时，她才能放下重担，做普通女孩也能做的事。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              深夜肚子饿了，避开佣人偷偷溜到厨房，哼着歌为自己做一碗茶泡饭；茶道课时，偷偷根据茶叶的形状占卜恋爱运势……等等。
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              虽然从未向他人说明，但绫华无比珍惜自己作为普通少女的时间。因为，这样的自由时刻实在很少。
-            </p>
-          </div>
-        </div>
+        // 随机大小
+        const size = Math.random() * 10 + 5;
+        petal.style.width = `${size}px`;
+        petal.style.height = `${size}px`;
         
-        <!-- 兴趣爱好 -->
-        <div class="mt-16 reveal">
-          <h3 class="text-xl font-bold text-primary mb-8">兴趣爱好</h3>
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <i class="fa fa-music text-primary"></i>
-              </div>
-              <h4 class="text-lg font-medium mb-2">雅乐诗词</h4>
-              <p class="text-gray-600">绫华对传统雅乐和诗词有着深厚的造诣。</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <i class="fa fa-utensils text-primary"></i>
-              </div>
-              <h4 class="text-lg font-medium mb-2">异国料理</h4>
-              <p class="text-gray-600">对异国料理充满兴趣，尽管很少有机会尝试。</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <i class="fa fa-anchor text-primary"></i>
-              </div>
-              <h4 class="text-lg font-medium mb-2">茶泡饭</h4>
-              <p class="text-gray-600">稻妻料理中，最喜欢的食物是茶泡饭。</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <i class="fa fa-gamepad text-primary"></i>
-              </div>
-              <h4 class="text-lg font-medium mb-2">手鞠游戏</h4>
-              <p class="text-gray-600">幼年时喜欢玩手鞠，给最喜爱的手鞠取名为「杜若丸」。</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div class="w-12 h-12
+        // 随机位置
+        petal.style.left = `${Math.random() * 100}vw`;
+        
+        // 随机延迟
+        petal.style.animationDelay = `${Math.random() * 10}s`;
+        
+        // 随机颜色
+        const hue = 340 + Math.random() * 20; // 粉色系
+        const saturation = 80 + Math.random() * 20;
+        const lightness = 85 + Math.random() * 10;
+        petal.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        
+        container.appendChild(petal);
+      }
+    }
+    
+    // 导航栏滚动效果
+    function handleNavbarScroll() {
+      const navbar = document.getElementById('navbar');
+      const backToTop = document.getElementById('back-to-top');
+      
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          navbar.classList.add('bg-dark/90', 'backdrop-blur-md', 'shadow-lg');
+          navbar.classList.remove('bg-transparent');
+          
+          backToTop.classList.remove('opacity-0', 'invisible');
+          backToTop.classList.add('opacity-100', 'visible');
+        } else {
+          navbar.classList.remove('bg-dark/90', 'backdrop-blur-md', 'shadow-lg');
+          navbar.classList.add('bg-transparent');
+          
+          backToTop.classList.add('opacity-0', 'invisible');
+          backToTop.classList.remove('opacity-100', 'visible');
+        }
+      });
+    }
+    
+    // 移动端菜单
+    function handleMobileMenu() {
+      const menuToggle = document.getElementById('menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+      
+      // 点击菜单项后关闭菜单
+      const mobileLinks = mobileMenu.querySelectorAll('a');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+        });
+      });
+    }
+    
+    // 平滑滚动
+    function handleSmoothScroll() {
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+      // 返回顶部按钮
+      const backToTop = document.getElementById('back-to-top');
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    }
+    
+    // 画廊过滤
+    function handleGalleryFilter() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // 移除所有按钮的活动状态
+          filterButtons.forEach(btn => {
+            btn.classList.remove('active', 'bg-primary', 'text-white');
+            btn.classList.add('bg-gray-200', 'hover:bg-primary/10', 'text-dark');
+          });
+          
+          // 添加当前按钮的活动状态
+          button.classList.add('active', 'bg-primary', 'text-white');
+          button.classList.remove('bg-gray-200', 'hover:bg-primary/10', 'text-dark');
+          
+          const filter = button.getAttribute('data-filter');
+          
+          // 过滤项目
+          galleryItems.forEach(item => {
+            if (filter === 'all' || item.getAttribute('data-category') === filter) {
+              item.style.display = 'block';
+              setTimeout(() => {
+                item.classList.add('scale-up-center');
+              }, 10);
+            } else {
+              item.style.display = 'none';
+              item.classList.remove('scale-up-center');
+            }
+          });
+        });
+      });
+    }
+    
+    // 语录轮播
+    function handleQuotesCarousel() {
+      const track = document.getElementById('quotes-track');
+      const slides = document.querySelectorAll('.quote-slide');
+      const prevButton = document.getElementById('prev-quote');
+      const nextButton = document.getElementById('next-quote');
+      const indicators = document.querySelectorAll('.carousel-indicator');
+      
+      let currentIndex = 0;
+      const slideWidth = 100; // 百分比
+      
+      function updateCarousel() {
+        track.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+        
+        // 更新指示器
+        indicators.forEach((indicator, index) => {
+          if (index === currentIndex) {
+            indicator.classList.add('bg-primary');
+            indicator.classList.remove('bg-gray-300');
+          } else {
+            indicator.classList.remove('bg-primary');
+            indicator.classList.add('bg-gray-300');
+          }
+        });
+      }
+      
+      prevButton.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateCarousel();
+      });
+      
+      nextButton.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateCarousel();
+      });
+      
+      indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+          currentIndex = index;
+          updateCarousel();
+        });
+      });
+      
+      // 自动轮播
+      setInterval(() => {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateCarousel();
+      }, 5000);
+    }
+    
+    // 角色人气图表
+    function initCharacterChart() {
+      const ctx = document.getElementById('character-chart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['樱岛麻衣', '梓川咲太', '双叶理央', '古贺朋绘', '其他角色'],
+          datasets: [{
+            data: [42, 28, 15, 10, 5],
+            backgroundColor: [
+              '#FF85A2',
+              '#8A79DF',
+              '#FFD6E0',
+              '#2D3748',
+              '#A0AEC0'
+            ],
+            borderWidth: 0,
+            hoverOffset: 15
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.raw}%`;
+                }
+              }
+            }
+          },
+          cutout: '70%',
+          animation: {
+            animateScale: true,
+            animateRotate: true
+          }
+        }
+      });
+    }
+    
+    // 表单提交
+    function handleFormSubmit() {
+      const form = document.getElementById('contact-form');
+      
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // 模拟表单提交
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 发送中...';
+        
+        setTimeout(() => {
+          alert('留言已提交成功！感谢你的反馈。');
+          form.reset();
+          submitButton.disabled = false;
+          submitButton.innerHTML = originalText;
+        }, 1500);
+      });
+    }
+    
+    // 页面加载完成后初始化所有功能
+    window.addEventListener('DOMContentLoaded', () => {
+      createCherryBlossoms();
+      handleNavbarScroll();
+      handleMobileMenu();
+      handleSmoothScroll();
+      handleGalleryFilter();
+      handleQuotesCarousel();
+      initCharacterChart();
+      handleFormSubmit();
+    });
+  </script>
+</body>
+</html>    
